@@ -37,7 +37,11 @@ shopt -u extglob
 
 # For testing copy /var/log/messages to /tmp/messages and change to:
 # LOGFILE=/tmp/messages
-LOGFILE=/var/log/messages
+if [ -f /var/log/syslog ]; then
+    LOGFILE=/var/log/syslog
+else
+    LOGFILE=/var/log/messages
+fi
 
 #
 #
