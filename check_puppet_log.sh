@@ -70,7 +70,7 @@ usage()
     echo "check_puppet_log.sh [-s]"
     echo
     echo "Checks log for puppet errors"
-    echo "Use -s option to use sudo for reading /var/log/messages"
+    echo "Use -s option to use sudo for reading $LOGFILE"
 }
 
 # ----------------------------------------------------------------------------
@@ -117,11 +117,15 @@ main()
     last3=`echo "$last" | tail -1`
 
     errors=0
+    last_error=0
     [[ "$last1" =~ "Could" ]] && let errors+=1
     [[ "$last2" =~ "Could" ]] && let errors+=1
-    [[ "$last3" =~ "Could" ]] && let errors+=1
+    [[ "$last3" =~ "Could" ]] && let errors+=1 && last_error=1
 
-    if [[ $errors -eq 3 ]]; then
+    if [[ $last_error -eq 1 ]]; then
+        echo "CRITICAL: Last Puppet run did not complete. Error was 'Could not retrieve catalog'."
+	retval=$NAGCRIT
+    elif [[ $errors -eq 3 ]]; then
         echo "WARNING: Puppet run did not complete. Error was 'Could not retrieve catalog'."
         retval=$NAGWARN
     else
