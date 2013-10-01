@@ -124,7 +124,7 @@ main()
 
     if [[ $last_error -eq 1 ]]; then
         echo "CRITICAL: Last Puppet run did not complete. Error was 'Could not retrieve catalog'."
-	retval=$NAGCRIT
+        retval=$NAGCRIT
     elif [[ $errors -eq 3 ]]; then
         echo "WARNING: Puppet run did not complete. Error was 'Could not retrieve catalog'."
         retval=$NAGWARN
