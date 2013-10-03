@@ -107,12 +107,13 @@ main()
     parse_options
 
     retval=$NAGOK
-    if [ ! -r $LOGFILE ]; then
+    log=`$SUDO`
+    if [ $? -eq 1 ]; then
         echo "CRITICAL: User '`whoami`' does not have read access to $LOGFILE"
         exit $NAGCRIT
     fi
 
-    last=`$SUDO | egrep -e "(puppet-agent|puppetd).*Could not retrieve catalog;" \
+    last=`echo "$log" | egrep -e "(puppet-agent|puppetd).*Could not retrieve catalog;" \
          -e "(puppet-agent|puppetd).*Finished catalog run in .* seconds" \
          | tail -3`
 
