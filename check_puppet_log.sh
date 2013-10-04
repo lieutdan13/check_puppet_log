@@ -109,7 +109,7 @@ main()
     retval=$NAGOK
     log=`$SUDO`
     if [ $? -eq 1 ]; then
-        echo "CRITICAL: User '`whoami`' does not have read access to $LOGFILE"
+        echo "PUPPET LOG CRITICAL: User '`whoami`' does not have read access to $LOGFILE"
         exit $NAGCRIT
     fi
 
@@ -128,10 +128,10 @@ main()
     [[ "$last3" =~ "Could" ]] && let errors+=1 && last_error=1
 
     if [[ $last_error -eq 1 ]]; then
-        echo "CRITICAL: Last Puppet run did not complete. Error was 'Could not retrieve catalog'."
+        echo "PUPPET LOG CRITICAL: Last Puppet run did not complete. Error was 'Could not retrieve catalog'."
         retval=$NAGCRIT
     elif [[ $errors -eq 3 ]]; then
-        echo "WARNING: Puppet run did not complete. Error was 'Could not retrieve catalog'."
+        echo "PUPPET LOG WARNING: Puppet run did not complete. Error was 'Could not retrieve catalog'."
         retval=$NAGWARN
     else
         betweenlinenos=`$SUDO | egrep -n -e "(puppet-agent|puppetd).*Finished catalog run" \
@@ -144,13 +144,13 @@ main()
             lines=`$SUDO | sed -n "$a,$b {p}"`
         fi
         if echo "$lines" | egrep -qs "(puppet-agent|puppetd).*fail"; then
-            echo "WARNING: Puppet run completed but there were failures."
+            echo "PUPPET LOG WARNING: Puppet run completed but there were failures."
             retval=$NAGWARN
         elif echo "$lines" | egrep -qs "(puppet-agent|puppetd).*Could not apply complete catalog"; then
-            echo "WARNING: Puppet run completed but did not apply the complete catalog."
+            echo "PUPPET LOG WARNING: Puppet run completed but did not apply the complete catalog."
             retval=$NAGWARN
         elif echo "$lines" | egrep -qs "(puppet-agent|puppetd).*Could not"; then
-            echo "WARNING: Puppet run completed but there were problems."
+            echo "PUPPET LOG WARNING: Puppet run completed but there were problems."
             retval=$NAGWARN
         else
             if [[ $errors -gt 0 ]]; then
